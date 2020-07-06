@@ -24,6 +24,11 @@ export default {
   },
   watch: {
     img() {
+      this.loadPicture();
+    }
+  },
+  methods: {
+    loadPicture() {
       if (this.img.cropped_picture) {
         let img = new Image();
         img.src = this.img.cropped_picture;
@@ -33,6 +38,9 @@ export default {
         img = null;
       }
     }
+  },
+  mounted() {
+    this.loadPicture();
   }
 }
 </script>

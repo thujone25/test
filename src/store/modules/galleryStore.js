@@ -11,6 +11,7 @@ export default {
     async getImages({commit, state}) {
       const resp = await api.getImages(state.page);
       commit('setImages', resp.data.pictures);
+      commit('setTotalPages', resp.data.pageCount);
     },
     async loadMoreImages({commit, dispatch}) {
       commit('incrementPage');
