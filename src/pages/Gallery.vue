@@ -1,20 +1,42 @@
 <template>
   <div class="gallery">
-    <OneImage v-for="(item, index) in 25"
-              :key="index"
-              class="gallery__one-image" />
+    <template v-if="finalImages">
+      <OneImage v-for="(item, index) in finalImages"
+                :key="index"
+                :img="item"
+                class="gallery__one-image" />
+    </template>
+    <template v-else>
+      <div>Sorry, our database is empty and we don't have any images yet =(</div>
+    </template>
   </div>
 </template>
 
 <script>
+import {mapState} from 'vuex'; 
 import OneImage from '@/components/Gallery/OneImageTile';
 
 export default {
   components: {
     OneImage
   },
-  mounted() {
-    this.$store.dispatch('galleryStore/getImages');
+  data() {
+    return {
+      requestIsInProgress: false
+    }
+  },
+  computed: {
+    ...mapState('galleryStore', ['images', 'totalPages']),
+    finalImages() {
+      if (this.requestIsInProgress) return 20;
+      return this.images.length ? this.images : '';
+    }
+  },
+  created() {
+    this.requestIsInProgress = true;
+    this.$store.dispatch('galleryStore/getImages').then(() => {
+      this.requestIsInProgress = false;
+    });
   }
 }
 </script>
@@ -24,7 +46,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  max-width: 1550px;
+  max-width: 1590px;
   padding: 20px;
   margin: 0 auto;
 }
