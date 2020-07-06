@@ -12,6 +12,9 @@ import OneImage from '@/components/Gallery/OneImageTile';
 export default {
   components: {
     OneImage
+  },
+  mounted() {
+    this.$store.dispatch('galleryStore/getImages');
   }
 }
 </script>
