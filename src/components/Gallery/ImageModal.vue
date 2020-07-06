@@ -9,6 +9,7 @@
       <img :src="img.full_picture"
            :class="{'image-modal__img--with-image': loaded}"
            class="image-modal__img">
+      <p class="image-modal__img-info">{{ imgInfoText }}</p>
     </div>
     <button class="image-modal__close-btn">X</button>
   </div>
@@ -32,6 +33,9 @@ export default {
         }
       }
       return undefined;
+    },
+    imgInfoText() {
+      return [this.img.author || '', this.img.camera || '', this.img.tags || ''].join(', ');
     }
   },
   watch: {
@@ -77,7 +81,7 @@ export default {
   background-color: rgba(10, 10, 10, 0.45);
 }
 .image-modal__content {
-  z-index: 10;
+  position: relative;
   display: block;
   background-color: #ffffff;
   border-radius: 12px;
@@ -98,6 +102,21 @@ export default {
   height: initial;
   background-image: none;
 }
+.image-modal__img-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px;
+  font-size: 14px;
+  text-shadow: 0 0 3px #000000;
+  color: #ffffff;
+  background-color: rgba(10, 10, 10, 0.85);
+  opacity: 0.45;
+}
+.image-modal__content:hover .image-modal__img-info {
+  opacity: 0.85;
+}
 .image-modal__close-btn {
   position: absolute;
   top: 0;
@@ -106,10 +125,10 @@ export default {
   display: block;
   width: 45px;
   height: 45px;
-  color: #ffffff;
   font-size: 25px;
   font-weight: bold;
   text-shadow: 0 0 3px #000000;
+  color: #ffffff;
 }
 @keyframes shine-avatar {
   0% {
