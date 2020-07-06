@@ -1,4 +1,5 @@
 import api from '@/api';
+import router from '@/router';
 
 export default {
   namespaced: true,
@@ -7,8 +8,13 @@ export default {
   },
   actions: {
     async getOneImage({commit}, id) {
-      const resp = await api.getOneImage(id);
-      commit('setOneImg', resp.data);
+      try {
+        const resp = await api.getOneImage(id);
+        commit('setOneImg', resp.data);
+      } catch (error) {
+        console.log(error);
+        router.push({name: "Gallery"});
+      }
     }
   },
   mutations: {

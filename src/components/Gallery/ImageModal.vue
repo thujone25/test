@@ -142,8 +142,8 @@ export default {
 }
 .image-modal__img-info {
   position: absolute;
-  left: 40px;
-  right: 40px;
+  left: 0;
+  right: 0;
   bottom: 0;
   z-index: 1;
   padding: 10px;
@@ -156,13 +156,14 @@ export default {
 .image-modal__prev-img-btn,
 .image-modal__next-img-btn {
   position: absolute;
-  bottom: 0;
-  top: 0;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 40px;
+  height: 40px;
   padding: 10px 0;
   font-size: 20px;
   font-weight: bold;
@@ -170,12 +171,13 @@ export default {
   color: #ffffff;
   background-color: rgba(10, 10, 10, 0.85);
   opacity: 0.45;
+  border-radius: 50%;
 }
 .image-modal__prev-img-btn {
-  left: 0;
+  left: 10px;
 }
 .image-modal__next-img-btn {
-  right: 0;
+  right: 10px;
 }
 .image-modal__content:hover .image-modal__img-info,
 .image-modal__content:hover .image-modal__copy-path-btn,
