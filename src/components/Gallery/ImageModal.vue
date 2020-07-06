@@ -3,6 +3,12 @@
        @click="closeModal">
     <div class="image-modal__content"
          @click.stop="">
+      <button v-clipboard:copy="currentPath"
+              class="image-modal__copy-path-btn"
+              @click="handleCopySuccess">
+        Copy link!
+        <span v-if="isCopied">Link copied!</span>
+      </button>
       <img :src="img.full_picture"
            :class="{'image-modal__img--with-image': loaded}"
            class="image-modal__img">
@@ -26,10 +32,16 @@ export default {
   props: ['img', 'disablePrev', 'disableNext'],
   data() {
     return {
-      loaded: false
+      loaded: false,
+      isCopied: false,
+      isCopyLinkActive: false,
+      timerId: false
     }
   },
   computed: {
+    currentPath() {
+      return window.location.href;
+    },
     finalStyles() {
       if (this.img.full_picture && this.loaded) {
         return {
@@ -64,6 +76,25 @@ export default {
     },
     closeModal() {
       this.$router.push({name: this.$route.name, query: {}});
+    },
+    handleCopySuccess() {
+      if (this.isCopied) {
+        this.isCopied = false;
+        this.isCopyLinkActive = false;
+        clearTimeout(this.timerId);
+      } else {
+        this.isCopied = true;
+        this.isCopyLinkActive = true;
+        if (this.timerId) {
+          this.timerId = null;
+          clearTimeout(this.timerId);
+        }
+        if (!this.timerId) {
+          this.timerId = setTimeout(() => {
+            this.isCopied = false;
+          }, 500);
+        }
+      }
     }
   },
   mounted() {
@@ -147,6 +178,7 @@ export default {
   right: 0;
 }
 .image-modal__content:hover .image-modal__img-info,
+.image-modal__content:hover .image-modal__copy-path-btn,
 .image-modal__content:hover .image-modal__prev-img-btn,
 .image-modal__content:hover .image-modal__next-img-btn {
   opacity: 0.85;
@@ -163,6 +195,33 @@ export default {
   font-weight: bold;
   text-shadow: 0 0 3px #000000;
   color: #ffffff;
+}
+.image-modal__copy-path-btn {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-block;
+  height: 25px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 0 3px #000000;
+  color: #ffffff;
+  background-color: rgba(10, 10, 10, 0.85);
+  opacity: 0.45;
+  border-radius: 12px;
+}
+.image-modal__copy-path-btn span {
+  position: absolute;
+  top: calc( 100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: bold;
+  text-shadow: 0 0 3px #000000;
+  color: #ffffff;
+  background-color: rgba(10, 10, 10, 0.85);
 }
 @keyframes shine-avatar {
   0% {
