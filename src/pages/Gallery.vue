@@ -5,10 +5,14 @@
                 :key="index"
                 :img="item"
                 class="gallery__one-image" />
-      <button v-if="showBtn"
-              :disabled="disabledBtn"
-              class="gallery__load-mode-btn"
-              @click="loadMorePictures">Load more</button>
+      <div class="gallery__load-mode-btn-cont">
+        <button v-if="showBtn"
+                :disabled="disabledBtn"
+                class="gallery__load-mode-btn"
+                @click="loadMorePictures">Load more</button>
+      </div>
+      <ImageModal v-if="showModal"
+                  :img="image" />
     </template>
     <template v-else>
       <div>Sorry, our database is empty and we don't have any images yet =(</div>
@@ -17,12 +21,14 @@
 </template>
 
 <script>
-import {mapState, mapActions} from 'vuex'; 
+import {mapState, mapActions, mapMutations} from 'vuex'; 
 import OneImage from '@/components/Gallery/OneImageTile';
+import ImageModal from '@/components/Gallery/ImageModal';
 
 export default {
   components: {
-    OneImage
+    OneImage,
+    ImageModal
   },
   data() {
     return {
@@ -32,16 +38,32 @@ export default {
   },
   computed: {
     ...mapState('galleryStore', ['images', 'totalPages', 'page']),
+    ...mapState('oneImgStore', ['image']),
     showBtn() {
       return this.page < this.totalPages;
     },
     finalImages() {
       if (this.requestIsInProgress) return 20;
       return this.images.length ? this.images : '';
+    },
+    showModal() {
+      return this.$route.query.img;
+    }
+  },
+  watch: {
+    $route(newVal, oldVal) {
+      if (newVal.query.img && !oldVal.query.img) {
+        this.getOneImage(newVal.query.img);
+      } else if (newVal.query.img && oldVal.query.img && newVal.query.img != oldVal.query.img) {
+        this.removeImg();
+        this.getOneImage(newVal.query.img);
+      }
     }
   },
   methods: {
     ...mapActions('galleryStore', ['getImages', 'loadMoreImages']),
+    ...mapActions('oneImgStore', ['getOneImage']),
+    ...mapMutations('oneImgStore', ['removeImg']),
     loadMorePictures() {
       this.disabledBtn = true;
       this.loadMoreImages().then(() => {
@@ -54,6 +76,11 @@ export default {
     this.$store.dispatch('galleryStore/getImages').then(() => {
       this.requestIsInProgress = false;
     });
+  },
+  mounted() {
+    if (this.$route.query.img) {
+      this.getOneImage(this.$route.query.img);
+    }
   }
 }
 </script>
@@ -73,6 +100,11 @@ export default {
   height: 169px;
   margin-right: 10px;
   margin-bottom: 10px;
+}
+.gallery__load-mode-btn-cont {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
 }
 .gallery__load-mode-btn {
   display: block;

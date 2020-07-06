@@ -1,7 +1,8 @@
 <template>
-  <div :style="finalStyles"
-       :class="{'one-gallery-image--with-image': finalStyles}"
-       class="one-gallery-image"></div>
+  <router-link :to="linkObj"
+               :style="finalStyles"
+               :class="{'one-gallery-image--with-image': finalStyles}"
+               class="one-gallery-image"></router-link>
 </template>
 
 <script>
@@ -13,6 +14,17 @@ export default {
     }
   },
   computed: {
+    linkObj() {
+      if (this.img.id) {
+        return {
+          name: this.$route.name,
+          query: {
+            img: this.img.id
+          }
+        };
+      }
+      return {};
+    },
     finalStyles() {
       if (this.img.cropped_picture && this.loaded) {
         return {
